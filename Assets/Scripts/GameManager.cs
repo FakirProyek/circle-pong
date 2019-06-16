@@ -15,8 +15,13 @@ public class GameManager : BaseClass
     #endregion Public_field
 
     #region Pivate_field
+    private bool isHost;
+
     private System.Random random;
+
     private const float ENUM_SPEED = (2 * Mathf.PI) / 360;
+    private const int ENUM_MAX_BALL_SPEED = 2;
+
     #endregion Pivate_field
     #endregion Initialize
 
@@ -86,21 +91,23 @@ public class GameManager : BaseClass
     #region private method
     private void InitBall()
     {
-        factoryBall.Add(prefabBall, Vector3.zero, Quaternion.identity, new Vector2(random.Next(-10,10), random.Next(-10,10)));
+        factoryBall.Add(prefabBall, Vector3.zero, Quaternion.identity, new Vector2(
+                random.Next(-ENUM_MAX_BALL_SPEED, ENUM_MAX_BALL_SPEED), 
+                random.Next(-ENUM_MAX_BALL_SPEED, ENUM_MAX_BALL_SPEED)));
     }
     private void InitPlayers()
     {
-        factoryBat.Add(prefabBat, new Vector3(2.5f, 0), Quaternion.Euler(0, 0, 90), true, 0);
+        factoryBat.Add(prefabBat, new Vector3(2.5f, 0), Quaternion.Euler(0, 0, 0), true, 0);
+        factoryBat.Add(prefabBat, new Vector3(-2.5f, 0), Quaternion.Euler(0, 0, 180), false, 0);
     }
 
     private void UpdatePlayer()
     {
         for (int i = 0; i < factoryBat.GetNumberOfObjectFactories(); i++)
         {
-            if (factoryBat.Get(i).IsMine)
+            if (factoryBat.Get(i).IsHost == isHost)
             {
                 factoryBat.Get(i).UpdateMethod();
-                //factoryBat.Get(i).UpdateMethod();
             }
         }
     }
@@ -109,7 +116,7 @@ public class GameManager : BaseClass
     {
         for (int i = 0; i < factoryBat.GetNumberOfObjectFactories(); i++)
         {
-            if (factoryBat.Get(i).IsMine)
+            if (factoryBat.Get(i).IsHost == isHost)
             {
                 factoryBat.Get(i).Speed = _speed;
             }

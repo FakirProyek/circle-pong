@@ -19,7 +19,8 @@ public class Ball : BaseClass
 
     #region Pivate_field
     private Rigidbody2D rigidbody;
-    public Vector2 velocity;
+    private Vector2 velocity;
+    private int owner;
 
     #endregion Pivate_field
     #endregion Initialize
@@ -28,6 +29,7 @@ public class Ball : BaseClass
     {
         rigidbody = GetComponent<Rigidbody2D>();
         rigidbody.velocity = velocity;
+        owner = 0;
     }
 
     void Start()
@@ -46,18 +48,42 @@ public class Ball : BaseClass
         if (collision.gameObject.tag == "Border")
         {
             Debug.Log("hit border");
+            switch (owner)
+            {
+                case 1:
+                    break;
+                case 2:
+                    break;
+                default:
+                    Debug.Log("Owner 0 bounce back");
+                    /*velocity.x = rigidbody.velocity.x;
+                    velocity.y = (rigidbody.velocity.y / 2.0f) + (collision.attachedRigidbody.velocity.y / 3.0f);
+                    rigidbody.velocity = -velocity;*/
+                    Debug.Log(rigidbody.velocity);
+                    //rigidbody.velocity *= -1;
+                    Debug.Log(rigidbody.velocity);
+
+                    break;
+            }
         }
-        if (collision.gameObject.tag == "Player")
-        {
-            
-            Debug.Log("hit player");
-        }
-        velocity.x = rigidbody.velocity.x;
-        velocity.y = (rigidbody.velocity.y / 2.0f) + (collision.attachedRigidbody.velocity.y / 3.0f);
-        rigidbody.velocity = -velocity;
     }
 
-    
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if(collision.gameObject.tag == "Player")
+        {
+            if (collision.gameObject.GetComponent<Bat>().IsHost)
+            {
+                owner = 1;
+            }
+            else
+            {
+                owner = 2;
+            }
+            Debug.Log("Owner : " + owner);
+        }
+    }
+
     #endregion
     #region public method
     public void Remove()
