@@ -16,6 +16,7 @@ public class GameManager : BaseClass
 
     #region Pivate_field
     private bool isHost;
+    private int homeScore, awayScore;
 
     private System.Random random;
 
@@ -93,10 +94,24 @@ public class GameManager : BaseClass
     {
         factoryBall.Add(prefabBall, Vector3.zero, Quaternion.identity, new Vector2(
                 random.Next(-ENUM_MAX_BALL_SPEED, ENUM_MAX_BALL_SPEED), 
+                random.Next(-ENUM_MAX_BALL_SPEED, ENUM_MAX_BALL_SPEED)), GetComponent<GameManager>());
+    }
+
+    public void Goal(int _scorer)
+    {
+        if (_scorer == 0)
+            homeScore++;
+        else
+            awayScore++;
+
+        factoryBall.Get(0).ResetPosition(new Vector2(
+                random.Next(-ENUM_MAX_BALL_SPEED, ENUM_MAX_BALL_SPEED),
                 random.Next(-ENUM_MAX_BALL_SPEED, ENUM_MAX_BALL_SPEED)));
     }
+
     private void InitPlayers()
     {
+        homeScore = awayScore = 0;
         factoryBat.Add(prefabBat, new Vector3(2.5f, 0), Quaternion.Euler(0, 0, 0), true, 0);
         factoryBat.Add(prefabBat, new Vector3(-2.5f, 0), Quaternion.Euler(0, 0, 180), false, 0);
     }

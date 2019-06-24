@@ -14,6 +14,7 @@ public class Ball : BaseClass
     #region Public_field
     public Rigidbody2D Rigidbody { get => rigidbody; set => rigidbody = value; }
     public Vector2 Velocity { get => velocity; set => velocity = value; }
+    public GameManager GameManager { get => gameManager; set => gameManager = value; }
 
     #endregion Public_field
 
@@ -21,6 +22,7 @@ public class Ball : BaseClass
     private Rigidbody2D rigidbody;
     private Vector2 velocity;
     private int owner;
+    private GameManager gameManager;
 
     #endregion Pivate_field
     #endregion Initialize
@@ -51,8 +53,10 @@ public class Ball : BaseClass
             switch (owner)
             {
                 case 1:
+                    gameManager.Goal(0);
                     break;
                 case 2:
+                    gameManager.Goal(1);
                     break;
                 default:
                     Debug.Log("Owner 0 bounce back");
@@ -60,7 +64,7 @@ public class Ball : BaseClass
                     velocity.y = (rigidbody.velocity.y / 2.0f) + (collision.attachedRigidbody.velocity.y / 3.0f);
                     rigidbody.velocity = -velocity;*/
                     Debug.Log(rigidbody.velocity);
-                    //rigidbody.velocity *= -1;
+                        rigidbody.velocity *= -1;
                     Debug.Log(rigidbody.velocity);
 
                     break;
@@ -95,6 +99,12 @@ public class Ball : BaseClass
     public void UpdateMethod()
     {
 
+    }
+
+    public void ResetPosition(Vector2 _velocity)
+    {
+        transform.position = Vector3.zero;
+        rigidbody.velocity = _velocity;
     }
     #endregion
 }
