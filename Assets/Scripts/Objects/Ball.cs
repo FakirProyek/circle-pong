@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Photon.Pun;
 using BlitheFramework;
 public class Ball : BaseClass
 {
@@ -64,9 +65,8 @@ public class Ball : BaseClass
                     velocity.y = (rigidbody.velocity.y / 2.0f) + (collision.attachedRigidbody.velocity.y / 3.0f);
                     rigidbody.velocity = -velocity;*/
                     Debug.Log(rigidbody.velocity);
-                        rigidbody.velocity *= -1;
+                    rigidbody.velocity *= -1;
                     Debug.Log(rigidbody.velocity);
-
                     break;
             }
         }
@@ -76,7 +76,7 @@ public class Ball : BaseClass
     {
         if(collision.gameObject.tag == "Player")
         {
-            if (collision.gameObject.GetComponent<Bat>().IsHost)
+            if (collision.gameObject.GetComponent<PhotonView>().IsMine)
             {
                 owner = 1;
             }
@@ -98,7 +98,7 @@ public class Ball : BaseClass
     #region update
     public void UpdateMethod()
     {
-
+        
     }
 
     public void ResetPosition(Vector2 _velocity)

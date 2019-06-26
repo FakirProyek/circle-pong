@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using BlitheFramework;
+using Photon.Pun;
+
 public class GameManager : BaseClass
 {
     #region Initialize
@@ -12,13 +14,14 @@ public class GameManager : BaseClass
     #endregion EVENT
 
     #region Public_field
+
     #endregion Public_field
 
     #region Pivate_field
     [SerializeField] GameObject canvasPopup;
     [SerializeField] Text txtScore, txtStatus;
 
-    private bool isHost, isGameOver;
+    private bool isHost, isGameOver, ballSpawned;
     private int homeScore, awayScore, winner;
 
     private System.Random random;
@@ -35,7 +38,7 @@ public class GameManager : BaseClass
         CreateFactoryBall();
         CreateFactoryBat();
         InitPlayers();
-        InitBall();
+        //InitBall();
         isGameOver = false;
         canvasPopup.SetActive(false);
     }
@@ -45,7 +48,7 @@ public class GameManager : BaseClass
         Init();
     }
     #region factory
-    [SerializeField] private GameObject prefabBat;
+    [SerializeField] private GameObject[] prefabBat;
     FactoryBat factoryBat;
     private void CreateFactoryBat()
     {
@@ -60,6 +63,7 @@ public class GameManager : BaseClass
 
     [SerializeField] private GameObject prefabBall;
     FactoryBall factoryBall;
+
     private void CreateFactoryBall()
     {
         var go = new GameObject();
@@ -97,9 +101,12 @@ public class GameManager : BaseClass
     #region private method
     private void InitBall()
     {
-        factoryBall.Add(prefabBall, Vector3.zero, Quaternion.identity, new Vector2(
-                random.Next(-ENUM_MAX_BALL_SPEED, ENUM_MAX_BALL_SPEED), 
+        if (PhotonNetwork.IsMasterClient)
+        {
+            factoryBall.Add(prefabBall, Vector3.zero, Quaternion.identity, new Vector2(
+                random.Next(-ENUM_MAX_BALL_SPEED, ENUM_MAX_BALL_SPEED),
                 random.Next(-ENUM_MAX_BALL_SPEED, ENUM_MAX_BALL_SPEED)), GetComponent<GameManager>());
+        }        
     }
 
     private void InitEndgame()
@@ -122,15 +129,21 @@ public class GameManager : BaseClass
     private void InitPlayers()
     {
         homeScore = awayScore = 0;
-        factoryBat.Add(prefabBat, new Vector3(2.5f, 0), Quaternion.Euler(0, 0, 0), true, 0);
-        factoryBat.Add(prefabBat, new Vector3(-2.5f, 0), Quaternion.Euler(0, 0, 180), false, 0);
+        if (PhotonNetwork.IsMasterClient)
+        {
+            factoryBat.Add(prefabBat[0], new Vector3(2.5f, 0), Quaternion.Euler(0, 0, 0), true, 0);
+        }
+        else
+        {
+            factoryBat.Add(prefabBat[1], new Vector3(-2.5f, 0), Quaternion.Euler(0, 0, 180), false, 0);
+        }
     }
 
     private void UpdatePlayer()
     {
         for (int i = 0; i < factoryBat.GetNumberOfObjectFactories(); i++)
         {
-            if (factoryBat.Get(i).IsHost == isHost)
+            if (factoryBat.Get(i).GetComponent<PhotonView>().IsMine)
             {
                 factoryBat.Get(i).UpdateMethod();
             }
@@ -141,7 +154,7 @@ public class GameManager : BaseClass
     {
         for (int i = 0; i < factoryBat.GetNumberOfObjectFactories(); i++)
         {
-            if (factoryBat.Get(i).IsHost == isHost)
+            if (factoryBat.Get(i).GetComponent<PhotonView>().IsMine)
             {
                 factoryBat.Get(i).Speed = _speed;
             }
@@ -195,7 +208,15 @@ public class GameManager : BaseClass
     public void FixedUpdate()
     {
         if(!isGameOver)
+        {
             UpdatePlayer();
+        }
+
+        if(PhotonNetwork.CurrentRoom.PlayerCount == 2 && ballSpawned == false)
+        {
+            InitBall();
+            ballSpawned = true;
+        }
     }
     #endregion
 }

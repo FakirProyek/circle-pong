@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using BlitheFramework;
+using Photon.Pun;
 
 public class FactoryBall: BaseClass
 {
@@ -22,7 +23,7 @@ public class FactoryBall: BaseClass
     public void Add(GameObject _object, Vector3 _position, Quaternion _rotation, Vector2 _velocity, GameManager _gameManager)
     {
         Ball ball = new Ball();
-        ball = Instantiate(_object, _position, _rotation).AddComponent<Ball>() as Ball;
+        ball = PhotonNetwork.Instantiate(_object.name, _position, _rotation).AddComponent<Ball>() as Ball;
         ball.Velocity = _velocity;
         ball.Init();
         ball.GameManager = _gameManager;

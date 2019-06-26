@@ -1153,13 +1153,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae33abd7f52f14b49bee2302943f3c27, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  canvasPopup: {fileID: 0}
-  txtScore: {fileID: 0}
-  txtStatus: {fileID: 0}
-  prefabBat: {fileID: 4570477020568810109, guid: 8c53e6b0edc39744dab0cff9c0caa9f1,
-    type: 3}
-  prefabBall: {fileID: 3719796182885589961, guid: d9238a919c2e3014b8b045f32b3d7029,
-    type: 3}
+  canvasPopup: {fileID: 556168220}
+  txtScore: {fileID: 236292289}
+  txtStatus: {fileID: 1011840085}
+  prefabBat:
+  - {fileID: 4570477020568810109, guid: 8c53e6b0edc39744dab0cff9c0caa9f1, type: 3}
+  - {fileID: 4570477020568810109, guid: dfb52483786fdcf4bbf4ddab305cb610, type: 3}
+  prefabBall: {fileID: 244, guid: d9238a919c2e3014b8b045f32b3d7029, type: 3}
 --- !u!4 &1613765969
 Transform:
   m_ObjectHideFlags: 0

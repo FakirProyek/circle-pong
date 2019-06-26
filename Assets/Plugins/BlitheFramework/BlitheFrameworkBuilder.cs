@@ -1,9 +1,40 @@
-﻿using BlitheFramework;
+﻿#if UNITY_EDITOR
+
+using BlitheFramework;
 using System.IO;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
+
+
+public class BlitheUIEditorBuilder
+{
+    public static MonoScript Clases { get => clases; set => clases = value; }
+    public static string ClassBaseName { get => classBaseName; set => classBaseName = value; }
+    public static string ClassSingletonName { get => classSingletonName; set => classSingletonName = value; }
+    public static string DatabaseName { get => databaseName; set => databaseName = value; }
+    public static string EventName { get => eventName; set => eventName = value; }
+    public static MonoScript ChildClass { get => childClass; set => childClass = value; }
+    public static MonoScript ParentClass { get => parentClass; set => parentClass = value; }
+    public static Button Button { get => button; set => button = value; }
+    public static MonoScript ButtonClassReference { get => buttonClassReference; set => buttonClassReference = value; }
+    public static MonoScript FactoryClass { get => factoryClass; set => factoryClass = value; }
+    public static MonoScript ClientFactoryClass { get => clientFactoryClass; set => clientFactoryClass = value; }
+
+    private static MonoScript clases;
+    private static string classBaseName;
+    private static string classSingletonName;
+    private static string databaseName;
+    private static string eventName;
+    private static MonoScript childClass;
+    private static MonoScript parentClass;
+    private static Button button;
+    private static MonoScript buttonClassReference;
+    private static MonoScript factoryClass;
+    private static MonoScript clientFactoryClass;
+}
+
 
 public class BlitheFrameworkBuilder : EditorWindow
 {
@@ -99,7 +130,7 @@ public class BlitheFrameworkBuilder : EditorWindow
         BlitheUIEditorBuilder.ClientFactoryClass = (MonoScript)EditorGUI.ObjectField(new Rect(10, 380, position.width - 100, 15), new GUIContent("Client class"), BlitheUIEditorBuilder.ClientFactoryClass, typeof(MonoScript), false);
         if (GUI.Button(new Rect(position.width - 80, 360, 70, 40), "Create"))
         {
-            FactoryAggregationGeneratorCalls(BlitheFramework.BlitheUIEditorBuilder.FactoryClass.name);
+            FactoryAggregationGeneratorCalls(BlitheUIEditorBuilder.FactoryClass.name);
             BlitheUIEditorBuilder.ClientFactoryClass = null;
             BlitheUIEditorBuilder.FactoryClass = null;
         }
@@ -440,3 +471,4 @@ public class BlitheFrameworkBuilder : EditorWindow
         }
     }
 }
+#endif

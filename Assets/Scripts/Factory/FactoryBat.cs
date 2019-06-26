@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using BlitheFramework;
+using Photon.Pun;
 
 public class FactoryBat: BaseClass
 {
@@ -22,7 +23,7 @@ public class FactoryBat: BaseClass
     public void Add(GameObject _object, Vector3 _position, Quaternion _rotation, bool _isHost, float _angle)
     {
         Bat bat = new Bat();
-        bat = Instantiate(_object, _position, _rotation).AddComponent<Bat>() as Bat;
+        bat = PhotonNetwork.Instantiate(_object.name, _position, _rotation).AddComponent<Bat>() as Bat;
         bat.Init(_isHost, _angle);
         #region EVENT_LISTENER_ADD_Bat
         bat.GetComponent<Bat>().EVENT_REMOVE += Remove;
