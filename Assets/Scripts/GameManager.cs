@@ -15,8 +15,11 @@ public class GameManager : BaseClass
     #endregion Public_field
 
     #region Pivate_field
-    private bool isHost;
-    private int homeScore, awayScore;
+    [SerializeField] GameObject canvasPopup;
+    [SerializeField] Text txtScore, txtStatus;
+
+    private bool isHost, isGameOver;
+    private int homeScore, awayScore, winner;
 
     private System.Random random;
 
@@ -33,6 +36,8 @@ public class GameManager : BaseClass
         CreateFactoryBat();
         InitPlayers();
         InitBall();
+        isGameOver = false;
+        canvasPopup.SetActive(false);
     }
 
     void Start()
@@ -97,16 +102,21 @@ public class GameManager : BaseClass
                 random.Next(-ENUM_MAX_BALL_SPEED, ENUM_MAX_BALL_SPEED)), GetComponent<GameManager>());
     }
 
-    public void Goal(int _scorer)
+    private void InitEndgame()
     {
-        if (_scorer == 0)
-            homeScore++;
+        if (homeScore > awayScore)
+            winner = 1;
         else
-            awayScore++;
+            winner = 2;
 
-        factoryBall.Get(0).ResetPosition(new Vector2(
-                random.Next(-ENUM_MAX_BALL_SPEED, ENUM_MAX_BALL_SPEED),
-                random.Next(-ENUM_MAX_BALL_SPEED, ENUM_MAX_BALL_SPEED)));
+        isGameOver = true;
+        InitEndgameCanvas();
+    }
+
+    private void InitEndgameCanvas()
+    {
+        canvasPopup.SetActive(true);
+        
     }
 
     private void InitPlayers()
@@ -141,6 +151,20 @@ public class GameManager : BaseClass
 
     #endregion
     #region public method
+    public void Goal(int _scorer)
+    {
+        if (_scorer == 0)
+            homeScore++;
+        else
+            awayScore++;
+
+        if (homeScore >= 5 || awayScore >= 5)
+            InitEndgame();
+        else
+            factoryBall.Get(0).ResetPosition(new Vector2(
+                random.Next(-ENUM_MAX_BALL_SPEED, ENUM_MAX_BALL_SPEED),
+                random.Next(-ENUM_MAX_BALL_SPEED, ENUM_MAX_BALL_SPEED)));
+    }
     public void OnPlusButtonDown()
     {
         ChangeMyPlayerSpeed(ENUM_SPEED);
@@ -161,11 +185,17 @@ public class GameManager : BaseClass
     {
        dispatchEvent(EVENT_REMOVE, this.gameObject, EventArgs.Empty);
     }
+
+    public void OnClickContinueButton()
+    {
+        
+    }
     #endregion
     #region update
     public void FixedUpdate()
     {
-        UpdatePlayer();
+        if(!isGameOver)
+            UpdatePlayer();
     }
     #endregion
 }
