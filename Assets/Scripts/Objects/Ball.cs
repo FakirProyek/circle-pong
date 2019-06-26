@@ -14,12 +14,15 @@ public class Ball : BaseClass
     #region Public_field
     public Rigidbody2D Rigidbody { get => rigidbody; set => rigidbody = value; }
     public Vector2 Velocity { get => velocity; set => velocity = value; }
+    public GameManager GameManager { get => gameManager; set => gameManager = value; }
 
     #endregion Public_field
 
     #region Pivate_field
     private Rigidbody2D rigidbody;
-    public Vector2 velocity;
+    private Vector2 velocity;
+    private int owner;
+    private GameManager gameManager;
 
     #endregion Pivate_field
     #endregion Initialize
@@ -28,6 +31,7 @@ public class Ball : BaseClass
     {
         rigidbody = GetComponent<Rigidbody2D>();
         rigidbody.velocity = velocity;
+        owner = 0;
     }
 
     void Start()
@@ -46,18 +50,44 @@ public class Ball : BaseClass
         if (collision.gameObject.tag == "Border")
         {
             Debug.Log("hit border");
+            switch (owner)
+            {
+                case 1:
+                    gameManager.Goal(0);
+                    break;
+                case 2:
+                    gameManager.Goal(1);
+                    break;
+                default:
+                    Debug.Log("Owner 0 bounce back");
+                    /*velocity.x = rigidbody.velocity.x;
+                    velocity.y = (rigidbody.velocity.y / 2.0f) + (collision.attachedRigidbody.velocity.y / 3.0f);
+                    rigidbody.velocity = -velocity;*/
+                    Debug.Log(rigidbody.velocity);
+                        rigidbody.velocity *= -1;
+                    Debug.Log(rigidbody.velocity);
+
+                    break;
+            }
         }
-        if (collision.gameObject.tag == "Player")
-        {
-            
-            Debug.Log("hit player");
-        }
-        velocity.x = rigidbody.velocity.x;
-        velocity.y = (rigidbody.velocity.y / 2.0f) + (collision.attachedRigidbody.velocity.y / 3.0f);
-        rigidbody.velocity = -velocity;
     }
 
-    
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if(collision.gameObject.tag == "Player")
+        {
+            if (collision.gameObject.GetComponent<Bat>().IsHost)
+            {
+                owner = 1;
+            }
+            else
+            {
+                owner = 2;
+            }
+            Debug.Log("Owner : " + owner);
+        }
+    }
+
     #endregion
     #region public method
     public void Remove()
@@ -69,6 +99,12 @@ public class Ball : BaseClass
     public void UpdateMethod()
     {
 
+    }
+
+    public void ResetPosition(Vector2 _velocity)
+    {
+        transform.position = Vector3.zero;
+        rigidbody.velocity = _velocity;
     }
     #endregion
 }

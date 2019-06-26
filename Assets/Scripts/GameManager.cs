@@ -15,8 +15,17 @@ public class GameManager : BaseClass
     #endregion Public_field
 
     #region Pivate_field
+    [SerializeField] GameObject canvasPopup;
+    [SerializeField] Text txtScore, txtStatus;
+
+    private bool isHost, isGameOver;
+    private int homeScore, awayScore, winner;
+
     private System.Random random;
+
     private const float ENUM_SPEED = (2 * Mathf.PI) / 360;
+    private const int ENUM_MAX_BALL_SPEED = 2;
+
     #endregion Pivate_field
     #endregion Initialize
 
@@ -27,6 +36,8 @@ public class GameManager : BaseClass
         CreateFactoryBat();
         InitPlayers();
         InitBall();
+        isGameOver = false;
+        canvasPopup.SetActive(false);
     }
 
     void Start()
@@ -86,21 +97,42 @@ public class GameManager : BaseClass
     #region private method
     private void InitBall()
     {
-        factoryBall.Add(prefabBall, Vector3.zero, Quaternion.identity, new Vector2(random.Next(-10,10), random.Next(-10,10)));
+        factoryBall.Add(prefabBall, Vector3.zero, Quaternion.identity, new Vector2(
+                random.Next(-ENUM_MAX_BALL_SPEED, ENUM_MAX_BALL_SPEED), 
+                random.Next(-ENUM_MAX_BALL_SPEED, ENUM_MAX_BALL_SPEED)), GetComponent<GameManager>());
     }
+
+    private void InitEndgame()
+    {
+        if (homeScore > awayScore)
+            winner = 1;
+        else
+            winner = 2;
+
+        isGameOver = true;
+        InitEndgameCanvas();
+    }
+
+    private void InitEndgameCanvas()
+    {
+        canvasPopup.SetActive(true);
+        
+    }
+
     private void InitPlayers()
     {
-        factoryBat.Add(prefabBat, new Vector3(2.5f, 0), Quaternion.Euler(0, 0, 90), true, 0);
+        homeScore = awayScore = 0;
+        factoryBat.Add(prefabBat, new Vector3(2.5f, 0), Quaternion.Euler(0, 0, 0), true, 0);
+        factoryBat.Add(prefabBat, new Vector3(-2.5f, 0), Quaternion.Euler(0, 0, 180), false, 0);
     }
 
     private void UpdatePlayer()
     {
         for (int i = 0; i < factoryBat.GetNumberOfObjectFactories(); i++)
         {
-            if (factoryBat.Get(i).IsMine)
+            if (factoryBat.Get(i).IsHost == isHost)
             {
                 factoryBat.Get(i).UpdateMethod();
-                //factoryBat.Get(i).UpdateMethod();
             }
         }
     }
@@ -109,7 +141,7 @@ public class GameManager : BaseClass
     {
         for (int i = 0; i < factoryBat.GetNumberOfObjectFactories(); i++)
         {
-            if (factoryBat.Get(i).IsMine)
+            if (factoryBat.Get(i).IsHost == isHost)
             {
                 factoryBat.Get(i).Speed = _speed;
             }
@@ -119,6 +151,20 @@ public class GameManager : BaseClass
 
     #endregion
     #region public method
+    public void Goal(int _scorer)
+    {
+        if (_scorer == 0)
+            homeScore++;
+        else
+            awayScore++;
+
+        if (homeScore >= 5 || awayScore >= 5)
+            InitEndgame();
+        else
+            factoryBall.Get(0).ResetPosition(new Vector2(
+                random.Next(-ENUM_MAX_BALL_SPEED, ENUM_MAX_BALL_SPEED),
+                random.Next(-ENUM_MAX_BALL_SPEED, ENUM_MAX_BALL_SPEED)));
+    }
     public void OnPlusButtonDown()
     {
         ChangeMyPlayerSpeed(ENUM_SPEED);
@@ -139,11 +185,17 @@ public class GameManager : BaseClass
     {
        dispatchEvent(EVENT_REMOVE, this.gameObject, EventArgs.Empty);
     }
+
+    public void OnClickContinueButton()
+    {
+        
+    }
     #endregion
     #region update
     public void FixedUpdate()
     {
-        UpdatePlayer();
+        if(!isGameOver)
+            UpdatePlayer();
     }
     #endregion
 }

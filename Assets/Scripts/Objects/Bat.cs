@@ -12,13 +12,13 @@ public class Bat : BaseClass
     #endregion EVENT
 
     #region Public_field
-    public bool IsMine { get => isMine; set => isMine = value; }
+    public bool IsHost { get => isHost; set => isHost = value; }
     public float Angle { get => angle; set => angle = value; }
     public float Speed { get => speed; set => speed = value; }
     #endregion Public_field
 
     #region Pivate_field
-    private bool isMine;
+    private bool isHost;
     private float angle;
     private float speed;
 
@@ -30,9 +30,9 @@ public class Bat : BaseClass
     {
 
     }
-    public void Init(bool _isMine, float _angle)
+    public void Init(bool _isHost, float _angle)
     {
-        IsMine = _isMine;
+        IsHost = _isHost;
         Angle = _angle;
         Speed = 0;
     }
@@ -57,7 +57,7 @@ public class Bat : BaseClass
         Vector3 diff = Vector3.zero - transform.position;
         diff.Normalize();
         float rotation = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(0, 0, rotation - 90);
+        transform.rotation = Quaternion.Euler(0, 0, rotation + 180);
 
         transform.position = new Vector3(Mathf.Cos(Angle * ENUM_CIRCLE_RADIUS) * ENUM_CIRCLE_RADIUS, Mathf.Sin(Angle * ENUM_CIRCLE_RADIUS) * ENUM_CIRCLE_RADIUS);
     }
