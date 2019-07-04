@@ -19,7 +19,7 @@ public class GameManager : BaseClass
 
     #region Pivate_field
     [SerializeField] GameObject canvasPopup;
-    [SerializeField] Text txtScore, txtStatus;
+    [SerializeField] Text txtScore, txtStatus, txtBallOwner;
 
     private bool isHost, isGameOver, ballSpawned;
     private int homeScore, awayScore, winner;
@@ -207,7 +207,11 @@ public class GameManager : BaseClass
     #region update
     public void FixedUpdate()
     {
-        if(!isGameOver)
+        if (ballSpawned && PhotonNetwork.IsMasterClient)
+        {
+            txtBallOwner.text = "Owner : " + factoryBall.Get(0).Owner.ToString();
+        }
+        if (!isGameOver)
         {
             UpdatePlayer();
         }

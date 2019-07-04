@@ -16,6 +16,7 @@ public class Ball : BaseClass
     public Rigidbody2D Rigidbody { get => rigidbody; set => rigidbody = value; }
     public Vector2 Velocity { get => velocity; set => velocity = value; }
     public GameManager GameManager { get => gameManager; set => gameManager = value; }
+    public int Owner { get => owner; set => owner = value; }
 
     #endregion Public_field
 
@@ -32,7 +33,7 @@ public class Ball : BaseClass
     {
         rigidbody = GetComponent<Rigidbody2D>();
         rigidbody.velocity = velocity;
-        owner = 0;
+        Owner = 0;
     }
 
     void Start()
@@ -51,13 +52,15 @@ public class Ball : BaseClass
         if (collision.gameObject.tag == "Border")
         {
             Debug.Log("hit border");
-            switch (owner)
+            switch (Owner)
             {
                 case 1:
                     gameManager.Goal(0);
+                    owner = 0;
                     break;
                 case 2:
                     gameManager.Goal(1);
+                    owner = 0;
                     break;
                 default:
                     Debug.Log("Owner 0 bounce back");
@@ -78,13 +81,13 @@ public class Ball : BaseClass
         {
             if (collision.gameObject.GetComponent<PhotonView>().IsMine)
             {
-                owner = 1;
+                Owner = 1;
             }
             else
             {
-                owner = 2;
+                Owner = 2;
             }
-            Debug.Log("Owner : " + owner);
+            Debug.Log("Owner : " + Owner);
         }
     }
 
